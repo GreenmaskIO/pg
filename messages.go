@@ -1401,5 +1401,5 @@ func appendComment(b []byte, name string) []byte {
 	if name == "" {
 		return b
 	}
-	return append(b, fmt.Sprintf("/*%s*/\n", name)...)
+	return append(b, fmt.Sprintf("/* %s */ ", name)...)
 }
