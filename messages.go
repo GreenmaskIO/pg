@@ -487,10 +487,11 @@ func writeQueryMsg(
 	buf *pool.WriteBuffer,
 	fmter orm.QueryFormatter,
 	query interface{},
+	queryName string,
 	params ...interface{},
 ) error {
 	buf.StartMessage(queryMsg)
-	bytes, err := appendQuery(fmter, buf.Bytes, query, params...)
+	bytes, err := appendQuery(fmter, buf.Bytes, query, queryName, params...)
 	if err != nil {
 		return err
 	}
@@ -503,7 +504,8 @@ func writeQueryMsg(
 	return nil
 }
 
-func appendQuery(fmter orm.QueryFormatter, dst []byte, query interface{}, params ...interface{}) ([]byte, error) {
+func appendQuery(fmter orm.QueryFormatter, dst []byte, query interface{}, queryName string, params ...interface{}) ([]byte, error) {
+	appendComment(dst, queryName)
 	switch query := query.(type) {
 	case orm.QueryAppender:
 		if v, ok := fmter.(*orm.Formatter); ok {
@@ -1392,4 +1394,12 @@ func readMessageType(rd *pool.ReaderContext) (byte, int, error) {
 		return 0, 0, err
 	}
 	return c, int(l) - 4, nil
+}
+
+// Add comment in the header of the query
+func appendComment(b []byte, name string) []byte {
+	if name == "" {
+		return b
+	}
+	return append(b, fmt.Sprintf("/*%s*/\n", name)...)
 }
