@@ -153,7 +153,8 @@ func (tx *Tx) exec(ctx context.Context, query interface{}, params ...interface{}
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, tx.db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, tx.db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 
@@ -220,7 +221,8 @@ func (tx *Tx) query(
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, tx.db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, tx.db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 

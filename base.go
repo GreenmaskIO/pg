@@ -230,7 +230,8 @@ func (db *baseDB) exec(ctx context.Context, query interface{}, params ...interfa
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 
@@ -300,7 +301,8 @@ func (db *baseDB) query(ctx context.Context, model, query interface{}, params ..
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 
@@ -377,7 +379,8 @@ func (db *baseDB) copyFrom(
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 
@@ -399,7 +402,7 @@ func (db *baseDB) copyFrom(
 	}()
 
 	err = cn.WithWriter(ctx, db.opt.WriteTimeout, func(wb *pool.WriteBuffer) error {
-		return writeQueryMsg(wb, db.fmter, query, params...)
+		return writeQueryMsg(wb, db.fmter, query, queryComment, params...)
 	})
 	if err != nil {
 		return nil, err
@@ -459,7 +462,8 @@ func (db *baseDB) copyTo(
 	wb := pool.GetWriteBuffer()
 	defer pool.PutWriteBuffer(wb)
 
-	if err := writeQueryMsg(wb, db.fmter, query, params...); err != nil {
+	queryComment := GetQueryComment(ctx)
+	if err := writeQueryMsg(wb, db.fmter, query, queryComment, params...); err != nil {
 		return nil, err
 	}
 
@@ -481,7 +485,7 @@ func (db *baseDB) copyTo(
 	}()
 
 	err = cn.WithWriter(ctx, db.opt.WriteTimeout, func(wb *pool.WriteBuffer) error {
-		return writeQueryMsg(wb, db.fmter, query, params...)
+		return writeQueryMsg(wb, db.fmter, query, queryComment, params...)
 	})
 	if err != nil {
 		return nil, err

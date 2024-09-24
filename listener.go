@@ -171,8 +171,9 @@ func (ln *Listener) Listen(ctx context.Context, channels ...string) error {
 
 func (ln *Listener) listen(ctx context.Context, cn *pool.Conn, channels ...string) error {
 	err := cn.WithWriter(ctx, ln.db.opt.WriteTimeout, func(wb *pool.WriteBuffer) error {
+		queryComment := GetQueryComment(ctx)
 		for _, channel := range channels {
-			if err := writeQueryMsg(wb, ln.db.fmter, "LISTEN ?", pgChan(channel)); err != nil {
+			if err := writeQueryMsg(wb, ln.db.fmter, "LISTEN ?", queryComment, pgChan(channel)); err != nil {
 				return err
 			}
 		}
@@ -204,8 +205,9 @@ func (ln *Listener) Unlisten(ctx context.Context, channels ...string) error {
 
 func (ln *Listener) unlisten(ctx context.Context, cn *pool.Conn, channels ...string) error {
 	err := cn.WithWriter(ctx, ln.db.opt.WriteTimeout, func(wb *pool.WriteBuffer) error {
+		queryComment := GetQueryComment(ctx)
 		for _, channel := range channels {
-			if err := writeQueryMsg(wb, ln.db.fmter, "UNLISTEN ?", pgChan(channel)); err != nil {
+			if err := writeQueryMsg(wb, ln.db.fmter, "UNLISTEN ?", queryComment, pgChan(channel)); err != nil {
 				return err
 			}
 		}
