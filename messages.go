@@ -505,7 +505,7 @@ func writeQueryMsg(
 }
 
 func appendQuery(fmter orm.QueryFormatter, dst []byte, query interface{}, queryName string, params ...interface{}) ([]byte, error) {
-	appendComment(dst, queryName)
+	dst = appendComment(dst, queryName)
 	switch query := query.(type) {
 	case orm.QueryAppender:
 		if v, ok := fmter.(*orm.Formatter); ok {
