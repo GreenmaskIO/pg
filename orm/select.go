@@ -53,6 +53,9 @@ func (q *SelectQuery) AppendTemplate(b []byte) ([]byte, error) {
 }
 
 func (q *SelectQuery) AppendQuery(fmter QueryFormatter, b []byte) (_ []byte, err error) { //nolint:gocyclo
+	if q.q.comment != "" {
+		b = appendComment(b, q.q.comment)
+	}
 	if q.q.stickyErr != nil {
 		return nil, q.q.stickyErr
 	}

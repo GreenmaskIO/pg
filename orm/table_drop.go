@@ -50,6 +50,9 @@ func (q *DropTableQuery) AppendTemplate(b []byte) ([]byte, error) {
 }
 
 func (q *DropTableQuery) AppendQuery(fmter QueryFormatter, b []byte) (_ []byte, err error) {
+	if q.q.comment != "" {
+		b = appendComment(b, q.q.comment)
+	}
 	if q.q.stickyErr != nil {
 		return nil, q.q.stickyErr
 	}
