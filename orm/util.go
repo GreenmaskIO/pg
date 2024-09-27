@@ -152,7 +152,7 @@ func appendColumns(b []byte, table types.Safe, fields []*Field) []byte {
 	return b
 }
 
-// Add comment in the header of the query
+// appendComment adds comment in the header of the query into buffer
 func appendComment(b []byte, name string) []byte {
 	if name == "" {
 		return b
